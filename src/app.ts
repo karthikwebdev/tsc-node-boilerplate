@@ -1,5 +1,5 @@
 import express, { Application } from 'express';
-import connect  from './utils/database/connect'
+import connect from '@utils/database/connect';
 import compression from 'compression';
 import cors from 'cors';
 import morgan from 'morgan';

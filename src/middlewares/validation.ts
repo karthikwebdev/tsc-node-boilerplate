@@ -12,18 +12,23 @@ function validationMiddleware(schema: Joi.Schema): RequestHandler {
       allowUnknown: true,
       stripUnknown: true,
     };
-
     try {
       const value = await schema.validateAsync(req.body, validationOptions);
       req.body = value;
       next();
     } catch (error: any) {
-      const errors: string[] = error.details.map(
-        (error: Joi.ValidationErrorItem) => {
-          return error.message;
-        }
-      );
-      res.status(400).json({ errors });
+      if (error.details && Array.isArray(error.details)) {
+        const errors: string[] = error.details.map(
+          (error: Joi.ValidationErrorItem) => {
+            return error.message;
+          }
+        );
+        res.status(400).json({ errors, message: 'Validations Failed' });
+      } else {
+        res
+          .status(500)
+          .json({ errors: [error.message], message: 'Something went wrong' });
+      }
     }
   };
 }
